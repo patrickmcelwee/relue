@@ -12,10 +12,10 @@
       true
       (every? #(notDivisible number %) (range 2 (+ 1 (math/sqrt number)))))))
 
-(defn primes [] (into [] (r/filter isPrime (range 105000))))
+(defn primes [] (r/filter isPrime (range)))
 
 (defn nth-prime [n]
-  (nth (primes) (- n 1)))
+  (nth (into [] (take n (primes))) (- n 1)))
 
 (time (nth-prime 10001))
 
