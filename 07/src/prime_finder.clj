@@ -10,9 +10,10 @@
      false
      (if ( = number 2)
        true
-       (every? #(notDivisible number %) (take-while
-                                          #(< % (+ 1 (math/sqrt number)))
-                                          candidates) ))))
+       (let [root (math/sqrt number)]
+         (every? #(notDivisible number %) (take-while
+                                           #(< % (+ 1 root))
+                                           candidates)) ))))
   )
 
 (defn primes
