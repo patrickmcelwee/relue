@@ -3,19 +3,24 @@
 (defn notDivisible [dividend divisor]
   (not ( = (mod dividend divisor) 0)))
 
-(defn isPrime [number]
-  (if ( < number 2)
-    false
-    (if ( = number 2)
-      true
-      (every? #(notDivisible number %) (range 2 (+ 1 (math/sqrt number)))))))
+(defn isPrime
+  ([number] (isPrime number (range 2 number)))
+  ([number candidates]
+   (if ( < number 2)
+     false
+     (if ( = number 2)
+       true
+       (every? #(notDivisible number %) (take-while
+                                          #(< % (+ 1 (math/sqrt number)))
+                                          candidates) ))))
+  )
 
 (defn primes
-  ([] (primes 2))
-  ([n] 
-   (if (isPrime n)
-     (cons n (lazy-seq (primes (inc n))))
-     (lazy-seq (primes (inc n)))
+  ([] (primes 3 [2]))
+  ([n alreadyPrimes] 
+   (if (isPrime n alreadyPrimes)
+     (cons n (lazy-seq (primes (inc n) (conj alreadyPrimes n))))
+     (lazy-seq (primes (inc n) alreadyPrimes))
      )
    )
   )
