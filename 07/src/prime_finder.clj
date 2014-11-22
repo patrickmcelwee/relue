@@ -10,7 +10,15 @@
       true
       (every? #(notDivisible number %) (range 2 (+ 1 (math/sqrt number)))))))
 
-(defn primes [] (filter isPrime (range)))
+(defn primes
+  ([] (primes 2))
+  ([n] 
+   (if (isPrime n)
+     (cons n (lazy-seq (primes (inc n))))
+     (lazy-seq (primes (inc n)))
+     )
+   )
+  )
 
 (defn nth-prime [n]
   (nth (into [] (take n (primes))) (- n 1)))
