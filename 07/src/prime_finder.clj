@@ -17,7 +17,7 @@
   )
 
 (defn primes
-  ([] (cons 2 (primes 3 [2])))
+  ([] (primes 2 []))
   ([n alreadyPrimes] 
    (if (isPrime n alreadyPrimes)
      (cons n (lazy-seq (primes (inc n) (conj alreadyPrimes n))))
