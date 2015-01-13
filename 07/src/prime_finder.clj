@@ -1,30 +1,31 @@
 (require '[clojure.math.numeric-tower :as math])
 
 (defn notDivisible [dividend divisor]
-  (not ( = (mod dividend divisor) 0)))
+  (not (= (mod dividend divisor) 0)))
 
 (defn isPrime
   ([number] (isPrime number (range 2 number)))
-  ([number candidates]
-   (if ( < number 2)
+  ([number smaller-primes]
+   (if (< number 2)
      false
-     (if ( = number 2)
+     (if (= number 2)
        true
        (let [root (math/sqrt number)]
          (every? #(notDivisible number %) (take-while
                                            #(< % (+ 1 root))
-                                           candidates)) ))))
-  )
+                                           smaller-primes)))))))
 
-(defn primes
-  ([] (primes 2 []))
-  ([n alreadyPrimes] 
-   (if (isPrime n alreadyPrimes)
-     (cons n (lazy-seq (primes (inc n) (conj alreadyPrimes n))))
-     (lazy-seq (primes (inc n) alreadyPrimes))
-     )
-   )
-  )
+(defn filter-using-past-results 
+  ([validator collection] (filter-using-past-results validator collection []))
+  ([validator collection past-results]
+   (let [n (first collection) remaining (rest collection)]
+     (if (validator n past-results)
+       (cons n (lazy-seq (filter-using-past-results validator
+                                                    remaining
+                                                    (conj past-results n))))
+       (lazy-seq (filter-using-past-results validator remaining past-results))))))
+
+(defn primes [] (filter-using-past-results isPrime (range)))
 
 (defn nth-prime [n]
   (nth (into [] (take n (primes))) (- n 1)))
